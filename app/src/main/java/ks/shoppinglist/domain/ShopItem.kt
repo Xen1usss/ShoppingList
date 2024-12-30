@@ -1,4 +1,4 @@
-package ks.shoppinglist.data
+package ks.shoppinglist.domain
 
 class ShopItem (
     val id: Int,
