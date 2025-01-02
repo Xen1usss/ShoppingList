@@ -29,7 +29,7 @@ object ShopListRepositoryImpl: ShopListRepository {
     override fun getShopItem(shopItemId: Int): ShopItem {
         return shopList.find {
             it.id == shopItemId
-        } :? throw RuntimeException("Element with id $shopItemId not found")
+        } ?: throw RuntimeException("Element with id $shopItemId not found")
     }
 
     override fun getShopList(): List<ShopItem> {
