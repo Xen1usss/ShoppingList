@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import ks.shoppinglist.domain.ShopItem
 import ks.shoppinglist.domain.ShopListRepository
-import java.util.Random
 
 object ShopListRepositoryImpl: ShopListRepository {
 
