@@ -8,13 +8,13 @@ import ks.shoppinglist.domain.ShopListRepository
 object ShopListRepositoryImpl: ShopListRepository {
 
     private val shopListLD = MutableLiveData<List<ShopItem>>()
-    private val shopList = mutableListOf<ShopItem>()
+    private val shopList = sortedSetOf<ShopItem>({ o1, o2 -> o1.id.compareTo(o2.id)}) // метод котлина, который создает java TreeSet
 
     private var autoIncrementId = 0
 
     init {
-        for (i in 0 until 10) {
-            val item = ShopItem("Name $i", i, true)
+        for (i in 0 until 1000 ) {
+            val item = ShopItem("Name $i", i, kotlin.random.Random.nextBoolean())
             addShopItem(item)
         }
     }
