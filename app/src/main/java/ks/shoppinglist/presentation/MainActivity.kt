@@ -8,6 +8,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import ks.shoppinglist.R
+import ks.shoppinglist.domain.ShopItem
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,12 +40,17 @@ class MainActivity : AppCompatActivity() {
             adapter = shopListAdapter
             recycledViewPool.setMaxRecycledViews(
                 ShopListAdapter.VIEW_TYPE_ENABLED,
-                ShopListAdapter.MAX_POOL_SIZE)
+                ShopListAdapter.MAX_POOL_SIZE
+            )
             recycledViewPool.setMaxRecycledViews(
                 ShopListAdapter.VIEW_TYPE_DISABLED,
-                ShopListAdapter.MAX_POOL_SIZE)
+                ShopListAdapter.MAX_POOL_SIZE
+            )
+        }
+        shopListAdapter.onShopItemLongClickListener = {
+            viewModel.changeEnableState(it)
         }
     }
-
+}
 
 }

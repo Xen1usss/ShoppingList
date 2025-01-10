@@ -1,7 +1,6 @@
 package ks.shoppinglist.presentation
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +20,7 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>
             field = value
             notifyDataSetChanged()
         }
+    var onShopItemLongClickListener: ((ShopItem) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopItemViewHolder {
         Log.d("ShopListAdapter", "onCreateViewHolder, count: ${++count}")
@@ -36,6 +36,7 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>
     override fun onBindViewHolder(holder: ShopItemViewHolder, position: Int) {
         val shopItem = shopList[position]
         holder.view.setOnLongClickListener {
+            onShopItemLongClickListener?.invoke(shopItem)
             true
         }
         holder.tvName.text = shopItem.name
@@ -70,6 +71,12 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>
     class ShopItemViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val tvName = view.findViewById<TextView>(R.id.tv_name)
         val tvCount = view.findViewById<TextView>(R.id.tv_count)
+    }
+
+    interface OnShopItemLongClickListener {
+
+        fun onShopItemLongClick(shopItem: ShopItem )
+
     }
 
     companion object {
