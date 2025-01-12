@@ -1,5 +1,7 @@
 package ks.shoppinglist.presentation
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ks.shoppinglist.data.ShopListRepositoryImpl
 import ks.shoppinglist.domain.AddShopItemUseCase
@@ -7,7 +9,7 @@ import ks.shoppinglist.domain.EditShopItemUseCase
 import ks.shoppinglist.domain.GetShopItemUseCase
 import ks.shoppinglist.domain.ShopItem
 
-class ShopItemViewModel: ViewModel() {
+class ShopItemViewModel : ViewModel() {
 
     private val repository = ShopListRepositoryImpl
 
@@ -15,8 +17,25 @@ class ShopItemViewModel: ViewModel() {
     private val addShopItemUseCase = AddShopItemUseCase(repository)
     private val editShopItemUseCase = EditShopItemUseCase(repository)
 
+    private val _errorInputName = MutableLiveData<Boolean>()
+    val errorInputName: LiveData<Boolean>
+        get() = _errorInputName
+
+    private val _shopItem = MutableLiveData<ShopItem>()
+    val shopItem: LiveData<ShopItem>
+        get() = _shopItem
+
+    private val _errorInputCount = MutableLiveData<Boolean>()
+    val errorInputCount: LiveData<Boolean>
+        get() = _errorInputCount
+
+    private val _closeDisplay = MutableLiveData<Unit>()
+    val closeDisplay: LiveData<Unit>
+        get() = _closeDisplay
+
     fun getShopItem(shopItemId: Int) {
         val item = getShopItemUseCase.getShopItem(shopItemId)
+        _shopItem.value = item
     }
 
     fun addShopItem(inputName: String?, inputCount: String?) {
@@ -26,6 +45,7 @@ class ShopItemViewModel: ViewModel() {
         if (fieldsValid == true) {
             val shopItem = ShopItem(name, count, true)
             addShopItemUseCase.addShopItem(shopItem)
+            finishWork()
         }
     }
 
@@ -34,8 +54,11 @@ class ShopItemViewModel: ViewModel() {
         val count = parseCount(inputCount)
         val fieldsValid = validateInput(name, count)
         if (fieldsValid == true) {
-            val shopItem = ShopItem(name, count, true)
-            editShopItemUseCase.editShopItem(shopItem)
+            _shopItem.value?.let {
+                val item = it.copy(name = name, count = count)
+                editShopItemUseCase.editShopItem(item)
+                finishWork()
+            }
         }
     }
 
@@ -55,13 +78,24 @@ class ShopItemViewModel: ViewModel() {
         var result = true
         if (name.isBlank()) {
             result = false
-            // TODO show error input name
+            _errorInputName.value = true
         }
         if (count <= 0) {
             result = false
-            // TODO show error input count
+            _errorInputCount.value = true
         }
         return result
     }
 
+    public fun resetErrorInputName() {
+        _errorInputName.value = false
+    }
+
+    public fun resetErrorInputCount() {
+        _errorInputCount.value = false
+    }
+
+    public fun finishWork() {
+        _closeDisplay.value = Unit
+    }
 }
